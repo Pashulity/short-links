@@ -86,7 +86,7 @@ public class LinkService {
     }
 
     private Link createLink(String url) {
-        String shortLink = StringUtils.join(serviceUrl +
+        String shortLink = StringUtils.join(serviceUrl,
                 Hashing.murmur3_32().hashString(url, StandardCharsets.UTF_8).toString());
         return new Link(userService.getCurrentUserLogin(), shortLink, url);
     }
