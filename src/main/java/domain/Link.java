@@ -4,6 +4,8 @@ package domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Link {
 
     @JsonIgnore
@@ -15,7 +17,7 @@ public class Link {
 
     private String userLogin;
 
-    private Integer hits;
+    private AtomicInteger hits;
 
     public Link() {
     }
@@ -25,7 +27,7 @@ public class Link {
         this.userLogin = userLogin;
         this.shortLink = shortLink;
         this.originalLink = originalLink;
-        this.hits = 0;
+        this.hits = new AtomicInteger();
     }
 
     public static String createId(String userLogin, String shortLink) {
@@ -40,11 +42,11 @@ public class Link {
         return originalLink;
     }
 
-    public Integer getHits() {
+    public AtomicInteger getHits() {
         return hits;
     }
 
-    public void setHits(Integer hits) {
+    public void setHits(AtomicInteger hits) {
         this.hits = hits;
     }
 

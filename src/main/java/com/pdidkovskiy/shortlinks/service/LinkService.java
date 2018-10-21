@@ -17,22 +17,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static domain.Link.*;
+import static domain.Link.createId;
 
 @Service
 public class LinkService {
 
-    @Autowired
-    private InMemoryLinkRepository userInMemoryLinkRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Value("${service.url}")
-    private String serviceUrl;
-
     private static final Pattern URL_PATTERN =
             Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$");
+    @Autowired
+    private InMemoryLinkRepository userInMemoryLinkRepository;
+    @Autowired
+    private UserService userService;
+    @Value("${service.url}")
+    private String serviceUrl;
 
     @PreAuthorize("hasAnyRole('ADMIN, USER')")
     public Link create(String url) {
@@ -70,13 +67,12 @@ public class LinkService {
     public String hitLink(String shortLink) {
         String login = userService.getCurrentUserLogin();
         String id = createId(login, shortLink);
-        synchronized (id.intern()) {
-            Link link = userInMemoryLinkRepository.findOne(id).orElseThrow(
-                    () -> new BadRequestException("Short link not found!")
-            );
-            link.setHits(link.getHits() + 1);
-            return link.getOriginalLink();
-        }
+        Link link = userInMemoryLinkRepository.findOne(id).orElseThrow(
+                () -> new BadRequestException("Short link not found!")
+        );
+        link.getHits().getAndIncrement();
+        return link.getOriginalLink();
+
     }
 
     private void validateUrl(String link) {

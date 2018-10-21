@@ -65,7 +65,7 @@ public class ShortLinksApplicationTests {
         countDownLatch.countDown();
         Thread.sleep(3000);
 
-        assertEquals(numThreads, (long) link.getHits());
+        assertEquals(numThreads, (long) link.getHits().get());
     }
 
     private Runnable createLinkRunnable(String url, CountDownLatch countDownLatch) {
